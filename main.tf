@@ -1,4 +1,9 @@
-variable "managed_instance_count" {}
+variable "amqp_uri" {}
+variable "build_api_uri" {}
+
+variable "managed_instance_count" {
+  default = "1"
+}
 
 variable "machine_type" {
   default = "n1-standard-1"
@@ -6,11 +11,23 @@ variable "machine_type" {
 
 variable "project" {}
 variable "region" {}
-variable "worker_docker_self_image" {}
-variable "worker_image" {}
+
+variable "worker_docker_self_image" {
+  default = "travisci/worker:v4.4.0"
+}
+
+variable "worker_image" {
+  # TODO: travis-ci-garnet-trusty-1512502259-986baf0
+  default = "ubuntu-1604-lts"
+}
 
 variable "zones" {
   default = ["a", "b", "c", "f"]
+}
+
+provider "google" {
+  project = "${var.project}"
+  region  = "${var.region}"
 }
 
 resource "google_service_account" "workers" {
@@ -127,31 +144,30 @@ EOF
 }
 
 data "template_file" "cloud_config" {
-  template = "${file("${path.module}/cloud-config.yml.tpl")}"
+  template = "${file("${path.module}/assets/cloud-config.yml.tpl")}"
 
   vars {
-    assets           = "${path.module}/../../assets"
+    assets           = "assets"
     cloud_init_env   = "${data.template_file.cloud_init_env.rendered}"
     gce_account_json = "${base64decode(google_service_account_key.workers.private_key)}"
-    here             = "${path.module}"
-    syslog_address   = "${var.syslog_address}"
-    worker_config    = "${var.config}"
+    worker_config    = <<EOF
+${file("${path.module}/worker.env")}
+export TRAVIS_WORKER_QUEUE_NAME=builds.trusty
+export TRAVIS_WORKER_AMQP_URI=${var.amqp_uri}
+export TRAVIS_WORKER_BUILD_API_URI=${var.build_api_uri}
+EOF
 
     docker_env = <<EOF
 export TRAVIS_DOCKER_DISABLE_DIRECT_LVM=1
-EOF
-
-    github_users_env = <<EOF
-export GITHUB_USERS='${var.github_users}'
 EOF
   }
 }
 
 resource "google_compute_instance_template" "worker" {
-  name_prefix = "${var.env}-${var.index}-worker-"
+  name_prefix = "worker-"
 
   machine_type = "${var.machine_type}"
-  tags         = ["worker", "${var.env}", "com", "paid"]
+  tags         = ["worker"]
   project      = "${var.project}"
 
   scheduling {
@@ -166,17 +182,16 @@ resource "google_compute_instance_template" "worker" {
   }
 
   network_interface {
+    network = "default"
+
     access_config {
       # ephemeral ip
     }
   }
 
   metadata {
-    "block-project-ssh-keys" = "true"
-    "user-data"              = "${data.template_file.cloud_config.rendered}"
+    "user-data" = "${data.template_file.cloud_config.rendered}"
   }
-
-  depends_on = ["null_resource.worker_validation"]
 
   lifecycle {
     create_before_destroy = true
@@ -184,7 +199,7 @@ resource "google_compute_instance_template" "worker" {
 }
 
 resource "google_compute_region_instance_group_manager" "worker" {
-  base_instance_name = "${var.env}-${var.index}-worker"
+  base_instance_name = "worker"
   instance_template  = "${google_compute_instance_template.worker.self_link}"
   name               = "worker"
   target_size        = "${var.managed_instance_count}"
