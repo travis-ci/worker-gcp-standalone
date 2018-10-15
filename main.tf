@@ -10,6 +10,11 @@ variable "machine_type" {
 }
 
 variable "project" {}
+
+variable "queue_name" {
+  default = "builds.trusty"
+}
+
 variable "region" {}
 
 variable "worker_docker_self_image" {
@@ -17,7 +22,6 @@ variable "worker_docker_self_image" {
 }
 
 variable "worker_image" {
-  # TODO: travis-ci-garnet-trusty-1512502259-986baf0
   default = "ubuntu-1604-lts"
 }
 
@@ -143,6 +147,9 @@ export TRAVIS_WORKER_SELF_IMAGE="${var.worker_docker_self_image}"
 EOF
 }
 
+# TODO handle missing stuff from gce_tfw_image
+# https://www.googleapis.com/compute/v1/projects/eco-emissary-99515/global/images/tfw-1523464380-560dabd
+
 data "template_file" "cloud_config" {
   template = "${file("${path.module}/assets/cloud-config.yml.tpl")}"
 
@@ -152,15 +159,12 @@ data "template_file" "cloud_config" {
     gce_account_json = "${base64decode(google_service_account_key.workers.private_key)}"
     worker_config    = <<EOF
 ${file("${path.module}/worker.env")}
-export TRAVIS_WORKER_QUEUE_NAME=builds.trusty
+export TRAVIS_WORKER_GCE_PROJECT_ID=${var.project}
+export TRAVIS_WORKER_GCE_REGION=${var.region}
+export TRAVIS_WORKER_QUEUE_NAME=${var.queue_name}
 export TRAVIS_WORKER_AMQP_URI=${var.amqp_uri}
 export TRAVIS_WORKER_BUILD_API_URI=${var.build_api_uri}
 EOF
-
-    docker_env = <<EOF
-export TRAVIS_DOCKER_DISABLE_DIRECT_LVM=1
-EOF
-  }
 }
 
 resource "google_compute_instance_template" "worker" {

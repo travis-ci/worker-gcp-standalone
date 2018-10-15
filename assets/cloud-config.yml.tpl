@@ -1,6 +1,12 @@
 #cloud-config
 # vim:filetype=yaml
 
+bootcmd:
+- curl -sSL https://get.docker.io | bash
+
+users:
+- travis
+
 write_files:
 - content: '${base64encode(worker_config)}'
   encoding: b64
@@ -10,10 +16,6 @@ write_files:
   encoding: b64
   owner: 'travis:travis'
   path: /etc/default/travis-worker-cloud-init
-- content: '${base64encode(docker_env)}'
-  encoding: b64
-  owner: 'root:root'
-  path: /etc/default/docker
 - content: '${base64encode(file("${assets}/travis-worker-wrapper"))}'
   encoding: b64
   owner: 'root:root'
