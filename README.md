@@ -22,11 +22,7 @@ There are some things that are present in our production setup, which are not in
 
 * Cleanup: We do not run [`gcloud-cleanup`](https://github.com/travis-ci/gcloud-cleanup), which means leaked VMs (e.g. from crashed workers) can persist. You may need to clean those up yourself.
 
-* Job Board: We do not run [`job-board`](https://github.com/travis-ci/job-board) for dynamic image selection. Images are configured through environment variables instead.
-
 * Rate Limits: We do not rate-limit traffic to the GCP API, if you run into quota limits, apply for a quota increase from GCP.
-
-* Warmer: We do not support pre-booting of VMs via the [`warmer` service](https://github.com/travis-ci/warmer).
 
 We may support some of these in the future if there is demand.
 
