@@ -29,6 +29,13 @@ variable "zones" {
   default = ["a", "b", "c", "f"]
 }
 
+terraform {
+  backend "gcs" {
+    bucket  = "travis-worker-standalone-tf"
+    prefix  = "terraform/state"
+  }
+}
+
 provider "google" {
   project = "${var.project}"
   region  = "${var.region}"
