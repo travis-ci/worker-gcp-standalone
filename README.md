@@ -2,7 +2,7 @@
 
 This is a terraform config that runs a worker in a setup that is similar to our hosted production setup ([travis-ci/terraform-config](https://github.com/travis-ci/gcloud-cleanup)) -- though it is a simplified version that makes less assumptions about the rest of the system.
 
-The main audience for this repo are enterprise users who would like to run their own workers on google cloud.
+The main audience for this repo are enterprise users who would like to run their own workers on Google Cloud.
 
 ## How it works
 
@@ -46,9 +46,11 @@ The [worker](https://github.com/travis-ci/worker) is our job execution engine. I
 
 This section will present a subset of what can be configured in worker. More customization is possible.
 
+All of this configuration is handled by the terraform setup (see [Usage](#Usage)). You do not need to do any of this manually.
+
 #### Google Cloud
 
-When running worker on google cloud, you will want to select the google cloud backend provider:
+When running worker on Google Cloud, you will want to select the Google Cloud backend provider:
 
 ```
 export TRAVIS_WORKER_PROVIDER_NAME=gce
@@ -151,7 +153,7 @@ brew tap caskroom/cask
 brew cask install google-cloud-sdk
 ```
 
-In order to authenticate with your google cloud account, you can run:
+In order to authenticate with your Google Cloud account, you can run:
 
 ```
 gcloud config set project <project>
@@ -169,7 +171,7 @@ cp config.auto.tfvars.example config.auto.tfvars
 vim config.auto.tfvars
 ```
 
-* `project` is the name of your google cloud project.
+* `project` is the name of your Google Cloud project.
 * `amqp_uri` is the URI to your RabbitMQ instance.
 * `build_api_uri` is the URI to your Travis CI Enterprise's `travis-build` installation.
 
