@@ -73,6 +73,7 @@ resource "google_project_iam_custom_role" "worker" {
     "compute.disks.useReadOnly",
     "compute.globalOperations.get",
     "compute.globalOperations.list",
+    "compute.images.list",
     "compute.instances.addAccessConfig",
     "compute.instances.addMaintenancePolicies",
     "compute.instances.attachDisk",
