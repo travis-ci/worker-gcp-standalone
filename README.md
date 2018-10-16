@@ -125,17 +125,98 @@ export GOTRACEBACK=all
 
 ## Usage
 
+You can use this repository to create and maintain your own set of workers running in Google Cloud.
+
 ### Setup
+
+First of all, you'll need to clone the repo:
+
+```
+git clone https://github.com/travis-ci/worker-gcp-standalone
+cd worker-gcp-standalone
+```
+
+Next, you will need to [install terraform](https://www.terraform.io/downloads.html):
+
+```
+# on macOS
+brew install terraform
+```
+
+To authenticate the google provider, you should also [install the Google Cloud SDK](https://cloud.google.com/sdk/install), which includes the `gcloud` command-line tool.
+
+```
+# on macOS
+brew tap caskroom/cask
+brew cask install google-cloud-sdk
+```
+
+In order to authenticate with your google cloud account, you can run:
+
+```
+gcloud config set project <project>
+gcloud auth application-default login
+```
+
+This is needed by later stages.
+
+### Config
+
+Next up, you'll need to configure the variables used by terraform and worker:
+
+```
+cp config.auto.tfvars.example config.auto.tfvars
+vim config.auto.tfvars
+```
+
+* `project` is the name of your google cloud project.
+* `amqp_uri` is the URI to your RabbitMQ instance.
+* `build_api_uri` is the URI to your Travis CI Enterprise's `travis-build` installation.
+
+It is also recommended that you set up a Google Cloud Storage bucket and configure terraform to persist its state there.
+
+```
+cp backend.tf.example backend.tf
+vim backend.tf
+```
+
+This step is optional. As a fallback, terraform will store the state on your local machine.
+
+Once the configuration is complete, you can go ahead and initialize terraform:
 
 ```
 terraform init
 ```
 
-### Configure
-
 ### Run
+
+Once everything is configured and initialized, you can go ahead and run a `plan`, to see what terraform is about to create:
 
 ```
 terraform plan
+```
+
+It should spit out a large blob of text, with a plan to create an instance template, an instance group, and possibly more.
+
+To actually create those resources, you can run `apply`:
+
+```
 terraform apply
 ```
+
+This will create the managed instance group and boot a worker.
+
+You can look at the list of instance groups to see if it was created properly. By clicking on the `worker` instance group, you should also see a worker host with a name like `worker-<suffix>`, e.g. `worker-0crc`.
+
+After clicking on that worker instance, you can click on `Serial port 1 (console)` to see the boot log. After a few minutes of boot time, you should see something along the lines of:
+
+```
+Oct 16 10:50:44 worker-0crc travis-worker[4071]: time="2018-10-16T10:50:44Z" level=info msg=starting pid=1 self=cli
+Oct 16 10:50:44 worker-0crc travis-worker[4071]: time="2018-10-16T10:50:44Z" level=info msg="worker started" pid=1 self=cli
+Oct 16 10:50:44 worker-0crc travis-worker[4071]: time="2018-10-16T10:50:44Z" level=info msg="setting up heartbeat" pid=1 self=cli
+Oct 16 10:50:44 worker-0crc travis-worker[4071]: time="2018-10-16T10:50:44Z" level=info msg="starting signal handler loop" pid=1 self=cli
+Oct 16 10:50:44 worker-0crc travis-worker[4071]: time="2018-10-16T10:50:44Z" level=info msg="starting processor" pid=1 processor=197a3e99-bd25-4bfa-802a-6311b3cc71ef@1.worker-0crc self=processor
+O
+```
+
+This indicates that the worker started successfully.
