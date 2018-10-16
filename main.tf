@@ -215,3 +215,7 @@ resource "google_compute_region_instance_group_manager" "worker" {
 
   distribution_policy_zones = "${formatlist("${var.region}-%s", var.zones)}"
 }
+
+output "workers_service_account_email" {
+  value = "${google_service_account.workers.email}"
+}
