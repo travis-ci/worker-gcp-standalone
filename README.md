@@ -222,3 +222,46 @@ O
 ```
 
 This indicates that the worker started successfully.
+
+### Making changes
+
+When making changes to the config, rolling out the change requires a few steps.
+
+First, you need to `plan`:
+
+```
+terraform plan
+```
+
+If the proposed changes look good, you can `apply`:
+
+```
+terraform apply
+```
+
+This will update the instance template, it will however not touch any of the existing instances.
+
+To make the changes live, the existing instances need to be replaced. That can be done via the `gcloud` tool on the command line (`region` would be something like `us-central1`):
+
+```
+gcloud beta compute instance-groups managed rolling-action replace worker --max-surge=4 --max-unavailable=4 --region <region> --project <project>
+```
+
+This will delete the existing worker instances and create new ones to replace them.
+
+Note that this can affect running jobs, so if possible, you should schedule a maintenance window for this operation and stop any running jobs before doing this.
+
+### Cleanup
+
+Since it is possible that jobs do not get cleaned up properly, you can use this command to find and delete old instances:
+
+```
+gcloud compute instances list \
+  --filter="creationTimestamp<$(ruby -r time -e 'puts (Time.now.utc - 2*3600).iso8601') AND name:travis-job-*" \
+  --format=json \
+  --project <project> \
+  | jq -r '.[].selfLink' \
+  | xargs -n1 -I'{}' gcloud compute instances delete --quiet {} --project <project>
+```
+
+You'll need to install [`jq`](https://stedolan.github.io/jq/) (`brew install jq`), and replace `<project>` with the name of your Google Cloud project.
