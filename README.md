@@ -131,6 +131,8 @@ export GOTRACEBACK=all
 terraform init
 ```
 
+### Configure
+
 ### Run
 
 ```

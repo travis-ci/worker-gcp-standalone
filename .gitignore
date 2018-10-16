@@ -2,3 +2,4 @@
 *.auto.tfvars
 *.tfstate
 *.tfstate.backup
+backend.tf
