@@ -165,6 +165,7 @@ export TRAVIS_WORKER_QUEUE_NAME=${var.queue_name}
 export TRAVIS_WORKER_AMQP_URI=${var.amqp_uri}
 export TRAVIS_WORKER_BUILD_API_URI=${var.build_api_uri}
 EOF
+  }
 }
 
 resource "google_compute_instance_template" "worker" {
