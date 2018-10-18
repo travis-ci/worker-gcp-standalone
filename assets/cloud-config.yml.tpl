@@ -5,8 +5,6 @@ users:
 - name: travis
   uid: 2000
 
-# TODO gce-container-declaration
-# https://github.com/GoogleCloudPlatform/konlet
 write_files:
 - path: /etc/default/travis-worker
   encoding: b64

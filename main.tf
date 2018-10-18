@@ -144,9 +144,6 @@ resource "google_service_account_key" "workers" {
   service_account_id = "${google_service_account.workers.email}"
 }
 
-# TODO handle missing stuff from gce_tfw_image
-# https://www.googleapis.com/compute/v1/projects/eco-emissary-99515/global/images/tfw-1523464380-560dabd
-
 data "template_file" "cloud_config" {
   template = "${file("${path.module}/assets/cloud-config.yml.tpl")}"
 
