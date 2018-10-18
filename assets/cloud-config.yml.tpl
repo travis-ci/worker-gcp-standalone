@@ -15,8 +15,8 @@ write_files:
   content: |
     [Unit]
     Description=Travis Worker
-    Wants=gcr-online.target
-    After=gcr-online.target
+    Wants=network-online.target
+    After=network-online.target
 
     [Service]
     Restart=always
