@@ -8,7 +8,7 @@ users:
 write_files:
 - path: /etc/default/travis-worker
   encoding: b64
-  content: ${base64encode(worker_config)}
+  content: ${base64encode(config)}
 - path: /etc/systemd/system/travis-worker.service
   permissions: 0644
   owner: root
@@ -20,7 +20,7 @@ write_files:
 
     [Service]
     Restart=always
-    ExecStart=/usr/bin/docker run --rm -u 2000 --env-file /etc/default/travis-worker --name=travis-worker ${worker_docker_self_image}
+    ExecStart=/usr/bin/docker run --rm -u 2000 --env-file /etc/default/travis-worker --name=travis-worker ${docker_image}
     ExecStop=/usr/bin/docker stop travis-worker
     ExecStopPost=/usr/bin/docker rm travis-worker
 
