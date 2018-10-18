@@ -25,5 +25,7 @@ write_files:
     ExecStopPost=/usr/bin/docker rm travis-worker
 
 runcmd:
+- echo ForwardToConsole=yes >> /etc/systemd/journald.conf
+- systemctl restart systemd-journald
 - systemctl daemon-reload
 - systemctl start travis-worker.service
