@@ -219,6 +219,29 @@ O
 
 This indicates that the worker started successfully.
 
+### Diagnose
+
+To diagnose issues, you can find the name of the worker instance and then SSH into the box:
+
+```
+gcloud compute instances list --filter='name:worker-*'
+
+gcloud compute ssh worker-0crc
+```
+
+Then, to check the status of the worker service:
+
+```
+sudo docker ps
+sudo systemctl status travis-worker
+```
+
+To see the logs:
+
+```
+sudo journalctl -u travis-worker --follow
+```
+
 ### Making changes
 
 When making changes to the config, rolling out the change requires a few steps.
