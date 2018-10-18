@@ -155,6 +155,7 @@ data "template_file" "cloud_config" {
     worker_config = <<EOF
 ${file("${path.module}/worker.env")}
 TRAVIS_WORKER_GCE_PROJECT_ID=${var.project}
+TRAVIS_WORKER_STACKDRIVER_PROJECT_ID=${var.project}
 TRAVIS_WORKER_GCE_REGION=${var.region}
 TRAVIS_WORKER_QUEUE_NAME=${var.queue_name}
 TRAVIS_WORKER_AMQP_URI=${var.amqp_uri}
@@ -200,8 +201,10 @@ resource "google_compute_instance_template" "worker" {
   service_account {
     email  = "${google_service_account.workers.email}"
     scopes = [
+      "cloud-platform",
       "storage-full",
       "compute-rw",
+      "trace-append"
     ]
   }
 }
