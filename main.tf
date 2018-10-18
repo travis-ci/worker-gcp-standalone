@@ -22,7 +22,7 @@ variable "worker_docker_self_image" {
 }
 
 variable "worker_image" {
-  default = "ubuntu-1604-lts"
+  default = "cos-cloud/cos-stable"
 }
 
 variable "zones" {
@@ -143,12 +143,6 @@ resource "google_service_account_key" "workers" {
   service_account_id = "${google_service_account.workers.email}"
 }
 
-data "template_file" "cloud_init_env" {
-  template = <<EOF
-export TRAVIS_WORKER_SELF_IMAGE="${var.worker_docker_self_image}"
-EOF
-}
-
 # TODO handle missing stuff from gce_tfw_image
 # https://www.googleapis.com/compute/v1/projects/eco-emissary-99515/global/images/tfw-1523464380-560dabd
 
@@ -156,16 +150,16 @@ data "template_file" "cloud_config" {
   template = "${file("${path.module}/assets/cloud-config.yml.tpl")}"
 
   vars {
-    assets           = "assets"
-    cloud_init_env   = "${data.template_file.cloud_init_env.rendered}"
-    gce_account_json = "${base64decode(google_service_account_key.workers.private_key)}"
-    worker_config    = <<EOF
+    worker_docker_self_image = "${var.worker_docker_self_image}"
+
+    worker_config = <<EOF
 ${file("${path.module}/worker.env")}
-export TRAVIS_WORKER_GCE_PROJECT_ID=${var.project}
-export TRAVIS_WORKER_GCE_REGION=${var.region}
-export TRAVIS_WORKER_QUEUE_NAME=${var.queue_name}
-export TRAVIS_WORKER_AMQP_URI=${var.amqp_uri}
-export TRAVIS_WORKER_BUILD_API_URI=${var.build_api_uri}
+TRAVIS_WORKER_GCE_ACCOUNT_JSON=${base64decode(google_service_account_key.workers.private_key)}
+TRAVIS_WORKER_GCE_PROJECT_ID=${var.project}
+TRAVIS_WORKER_GCE_REGION=${var.region}
+TRAVIS_WORKER_QUEUE_NAME=${var.queue_name}
+TRAVIS_WORKER_AMQP_URI=${var.amqp_uri}
+TRAVIS_WORKER_BUILD_API_URI=${var.build_api_uri}
 EOF
   }
 }
