@@ -144,6 +144,8 @@ resource "google_service_account_key" "workers" {
   service_account_id = "${google_service_account.workers.email}"
 }
 
+# TODO: make worker find its own zone via metadata
+
 data "template_file" "cloud_config" {
   template = "${file("${path.module}/assets/cloud-config.yml.tpl")}"
 
