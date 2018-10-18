@@ -18,7 +18,7 @@ variable "queue_name" {
 variable "region" {}
 
 variable "worker_docker_self_image" {
-  default = "travisci/worker:v4.4.0"
+  default = "travisci/worker:v4.5.1-18-g68b538c"
 }
 
 variable "worker_image" {
@@ -46,6 +46,7 @@ resource "google_project_iam_custom_role" "worker" {
   description = "A travis-worker process that can do travis-worky stuff"
 
   permissions = [
+    "cloudtrace.traces.patch",
     "compute.acceleratorTypes.get",
     "compute.acceleratorTypes.list",
     "compute.addresses.create",
@@ -154,7 +155,6 @@ data "template_file" "cloud_config" {
 
     worker_config = <<EOF
 ${file("${path.module}/worker.env")}
-TRAVIS_WORKER_GCE_ACCOUNT_JSON=${base64decode(google_service_account_key.workers.private_key)}
 TRAVIS_WORKER_GCE_PROJECT_ID=${var.project}
 TRAVIS_WORKER_GCE_REGION=${var.region}
 TRAVIS_WORKER_QUEUE_NAME=${var.queue_name}
@@ -196,6 +196,14 @@ resource "google_compute_instance_template" "worker" {
 
   lifecycle {
     create_before_destroy = true
+  }
+
+  service_account {
+    email  = "${google_service_account.workers.email}"
+    scopes = [
+      "storage-full",
+      "compute-rw",
+    ]
   }
 }
 
