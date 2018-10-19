@@ -144,6 +144,7 @@ In order to authenticate with your Google Cloud account, you can run:
 
 ```
 gcloud config set project <project>
+gcloud auth login
 gcloud auth application-default login
 ```
 
@@ -167,7 +168,15 @@ There are also some optional settings that you can override:
 * `queue_name` (defaults to `builds.trusty`)
 * `region` (defaults to `us-central1`)
 
-It is also recommended that you set up a Google Cloud Storage bucket and configure terraform to persist its state there.
+It is also recommended that you configure a terraform backend to persist the terraform state.
+
+To do that, you first need to create a Google Cloud Storage bucket:
+
+```
+gsutil mb gs://<bucket name>
+```
+
+Then, you'll need to  terraform to persist its state there:
 
 ```
 cp backend.tf.example backend.tf
