@@ -16,7 +16,7 @@ write_files:
 
     [Service]
     Restart=always
-    ExecStart=/usr/bin/docker run --rm --env-file /etc/default/travis-worker --name=travis-worker ${docker_image}
+    ExecStart=/usr/bin/docker run --rm -p 6060:6060 --env-file /etc/default/travis-worker --name=travis-worker ${docker_image}
     ExecStop=/usr/bin/docker stop travis-worker
     ExecStopPost=/usr/bin/docker rm travis-worker
 
