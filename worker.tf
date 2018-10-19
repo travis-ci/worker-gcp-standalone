@@ -112,7 +112,23 @@ resource "google_project_iam_member" "worker" {
   member  = "serviceAccount:${google_service_account.worker.email}"
 }
 
-# TODO: make worker find its own zone via metadata
+data "template_file" "worker_honeytail_config" {
+  template = "${file("${path.module}/assets/honeytail.conf.tpl")}"
+
+  vars {
+    docker_image = "${var.worker_docker_self_image}"
+
+    config = <<EOF
+${file("${path.module}/worker.env")}
+TRAVIS_WORKER_GCE_REGION=${var.region}
+TRAVIS_WORKER_QUEUE_NAME=${var.queue_name}
+TRAVIS_WORKER_AMQP_URI=${var.amqp_uri}
+TRAVIS_WORKER_BUILD_API_URI=${var.build_api_uri}
+EOF
+
+    honeytail_config =
+  }
+}
 
 data "template_file" "worker_cloud_config" {
   template = "${file("${path.module}/assets/cloud-config-worker.yml.tpl")}"
@@ -127,6 +143,8 @@ TRAVIS_WORKER_QUEUE_NAME=${var.queue_name}
 TRAVIS_WORKER_AMQP_URI=${var.amqp_uri}
 TRAVIS_WORKER_BUILD_API_URI=${var.build_api_uri}
 EOF
+
+    honeytail_config =
   }
 }
 
