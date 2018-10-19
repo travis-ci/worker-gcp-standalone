@@ -114,7 +114,7 @@ resource "google_project_iam_member" "worker" {
 
 # TODO: make worker find its own zone via metadata
 
-data "template_file" "cloud_config" {
+data "template_file" "worker_cloud_config" {
   template = "${file("${path.module}/assets/cloud-config-worker.yml.tpl")}"
 
   vars {
@@ -159,7 +159,7 @@ resource "google_compute_instance_template" "worker" {
   }
 
   metadata {
-    "user-data" = "${data.template_file.cloud_config.rendered}"
+    "user-data" = "${data.template_file.worker_cloud_config.rendered}"
   }
 
   lifecycle {
