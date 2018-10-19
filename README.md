@@ -224,6 +224,18 @@ O
 
 This indicates that the worker started successfully.
 
+### Image permissions
+
+Worker requires access to pre-built job images in order to boot job VMs. You need to contact our Enterprise Support to get that set up.
+
+When you run `terraform apply`, it should output a line similar to this one:
+
+```
+`worker_service_account_email` = worker@travis-worker-standalone.iam.gserviceaccount.com
+```
+
+Please contact us at the [Support Portal](https://support.travis-ci.com/hc/en-us) or at [`enterprise@travis-ci.com`](mailto:enterprise@travis-ci.com), and provide the `worker_service_account_email` or the name of your Google Cloud project.
+
 ### Diagnose
 
 To diagnose issues, you can find the name of the worker instance and then SSH into the box:
