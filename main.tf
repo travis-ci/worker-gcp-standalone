@@ -15,7 +15,9 @@ variable "queue_name" {
   default = "builds.trusty"
 }
 
-variable "region" {}
+variable "region" {
+  default = "us-central1"
+}
 
 variable "zones" {
   default = ["a", "b", "c", "f"]

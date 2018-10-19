@@ -164,6 +164,11 @@ vim config.auto.tfvars
 * `amqp_uri` is the URI to your RabbitMQ instance.
 * `build_api_uri` is the URI to your Travis CI Enterprise's `travis-build` installation.
 
+There are also some optional settings that you can override:
+
+* `queue_name` (defaults to `builds.trusty`)
+* `region` (defaults to `us-central1`)
+
 It is also recommended that you set up a Google Cloud Storage bucket and configure terraform to persist its state there.
 
 ```

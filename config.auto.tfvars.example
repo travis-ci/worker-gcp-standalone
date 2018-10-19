@@ -1,6 +1,5 @@
 {
   "project": "...",
-  "region": "us-central1",
   "amqp_uri": "...",
   "build_api_uri": "..."
 }
