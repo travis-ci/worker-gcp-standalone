@@ -114,7 +114,7 @@ resource "google_project_iam_member" "worker" {
 
 # TODO: make worker find its own zone via metadata
 
-data "template_file" "cloud_config" {
+data "template_file" "worker_cloud_config" {
   template = "${file("${path.module}/assets/cloud-config-worker.yml.tpl")}"
 
   vars {
@@ -130,6 +130,40 @@ TRAVIS_WORKER_AMQP_URI=${var.amqp_uri}
 TRAVIS_WORKER_BUILD_API_URI=${var.build_api_uri}
 EOF
   }
+}
+
+data "template_file" "worker_container_config" {
+  template = <<EOF
+spec:
+  containers:
+  - name: travis-worker
+    image: ${var.worker_docker_self_image}
+    env:
+    - { name: TRAVIS_WORKER_GCE_PROJECT_ID, value: '${var.project}' }
+    - { name: TRAVIS_WORKER_STACKDRIVER_PROJECT_ID, value: '${var.project}' }
+    - { name: TRAVIS_WORKER_GCE_REGION, value: '${var.region}' }
+    - { name: TRAVIS_WORKER_QUEUE_NAME, value: '${var.queue_name}' }
+    - { name: TRAVIS_WORKER_AMQP_URI, value: '${var.amqp_uri}' }
+    - { name: TRAVIS_WORKER_BUILD_API_URI, value: '${var.build_api_uri}' }
+
+    - { name: TRAVIS_WORKER_GCE_BOOT_POLL_SLEEP, value: 7s }
+    - { name: TRAVIS_WORKER_GCE_BOOT_PRE_POLL_SLEEP, value: 5s }
+    - { name: TRAVIS_WORKER_GCE_DISK_SIZE, value: 15 }
+    - { name: TRAVIS_WORKER_GCE_IMAGE_DEFAULT, value: 'travis-ci-garnet-trusty.%2B' }
+    - { name: TRAVIS_WORKER_GCE_IMAGE_PROJECT_ID, value: 'travis-worker-standalone' }
+    - { name: TRAVIS_WORKER_GCE_MACHINE_TYPE, value: 'n1-standard-2' }
+    - { name: TRAVIS_WORKER_GCE_SKIP_STOP_POLL, value: 'true' }
+    - { name: TRAVIS_WORKER_GCE_UPLOAD_RETRIES, value: 300 }
+    - { name: TRAVIS_WORKER_INFRA, value: gce }
+    - { name: TRAVIS_WORKER_OPENCENSUS_TRACING_ENABLED, value: 'true' }
+    - { name: TRAVIS_WORKER_POOL_SIZE, value: 30 }
+    - { name: TRAVIS_WORKER_PPROF_PORT, value: 6060 }
+    - { name: TRAVIS_WORKER_PROVIDER_NAME, value: gce }
+    - { name: TRAVIS_WORKER_SCRIPT_UPLOAD_TIMEOUT, value: 7m }
+    - { name: TRAVIS_WORKER_STARTUP_TIMEOUT, value: 8m }
+    - { name: GOTRACEBACK, value: all }
+  restartPolicy: Always
+EOF
 }
 
 resource "google_compute_instance_template" "worker" {
@@ -159,7 +193,8 @@ resource "google_compute_instance_template" "worker" {
   }
 
   metadata {
-    "user-data" = "${data.template_file.cloud_config.rendered}"
+#    "user-data"                 = "${data.template_file.worker_cloud_config.rendered}"
+    "gce-container-declaration" = "${data.template_file.worker_container_config.rendered}"
   }
 
   lifecycle {
