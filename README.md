@@ -219,7 +219,6 @@ Oct 16 10:50:44 worker-0crc travis-worker[4071]: time="2018-10-16T10:50:44Z" lev
 Oct 16 10:50:44 worker-0crc travis-worker[4071]: time="2018-10-16T10:50:44Z" level=info msg="setting up heartbeat" pid=1 self=cli
 Oct 16 10:50:44 worker-0crc travis-worker[4071]: time="2018-10-16T10:50:44Z" level=info msg="starting signal handler loop" pid=1 self=cli
 Oct 16 10:50:44 worker-0crc travis-worker[4071]: time="2018-10-16T10:50:44Z" level=info msg="starting processor" pid=1 processor=197a3e99-bd25-4bfa-802a-6311b3cc71ef@1.worker-0crc self=processor
-O
 ```
 
 This indicates that the worker started successfully.
