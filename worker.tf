@@ -125,6 +125,10 @@ TRAVIS_WORKER_QUEUE_NAME=${var.queue_name}
 TRAVIS_WORKER_AMQP_URI=${var.amqp_uri}
 TRAVIS_WORKER_BUILD_API_URI=${var.build_api_uri}
 EOF
+
+    honeycomb_dataset     = "${var.honeycomb_dataset}"
+    honeycomb_writekey    = "${var.honeycomb_writekey}"
+    honeycomb_sample_rate = "${var.honeycomb_sample_rate}"
   }
 }
 
