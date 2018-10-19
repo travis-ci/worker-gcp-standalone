@@ -1,5 +1,5 @@
 variable "worker_docker_self_image" {
-  default = "travisci/worker:v4.5.1-18-g68b538c"
+  default = "travisci/worker:v4.5.1-21-g60ec16c"
 }
 
 variable "worker_managed_instance_count" {
@@ -122,8 +122,6 @@ data "template_file" "worker_cloud_config" {
 
     config = <<EOF
 ${file("${path.module}/worker.env")}
-TRAVIS_WORKER_GCE_PROJECT_ID=${var.project}
-TRAVIS_WORKER_STACKDRIVER_PROJECT_ID=${var.project}
 TRAVIS_WORKER_GCE_REGION=${var.region}
 TRAVIS_WORKER_QUEUE_NAME=${var.queue_name}
 TRAVIS_WORKER_AMQP_URI=${var.amqp_uri}

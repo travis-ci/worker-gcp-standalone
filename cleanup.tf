@@ -1,5 +1,5 @@
 variable "cleanup_docker_self_image" {
-  default = "travisci/gcloud-cleanup:c636f91"
+  default = "travisci/gcloud-cleanup:43142c4"
 }
 
 variable "cleanup_instance_max_age" {
@@ -72,7 +72,6 @@ GCLOUD_CLEANUP_INSTANCE_FILTERS=name eq ^travis-job-.*
 GCLOUD_CLEANUP_INSTANCE_MAX_AGE=${var.cleanup_instance_max_age}
 GCLOUD_CLEANUP_LOOP_SLEEP=${var.cleanup_loop_sleep}
 GCLOUD_CLEANUP_OPENCENSUS_TRACING_ENABLED=true
-GCLOUD_PROJECT=${var.project}
 EOF
   }
 }

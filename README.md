@@ -55,10 +55,12 @@ export TRAVIS_WORKER_PROVIDER_NAME=gce
 This provider needs to know where to run the jobs:
 
 ```
-export TRAVIS_WORKER_GCE_PROJECT_ID=${var.project}
-export TRAVIS_WORKER_GCE_REGION=${var.region}
-export TRAVIS_WORKER_GCE_ZONE=<generated>
+export TRAVIS_WORKER_GCE_PROJECT_ID=...
+export TRAVIS_WORKER_GCE_REGION=...
+export TRAVIS_WORKER_GCE_ZONE=...
 ```
+
+If the worker itself is deployed on Google Cloud, it will infer this information from the Google Cloud metadata API, so that part of the configuration can be omitted in that case.
 
 Worker tries to authenticate with the Google Cloud API via the system-local credentials, that can be created via `gcloud auth application-default login`. Alternatively, it's also possible to point to a credentials JSON file:
 
