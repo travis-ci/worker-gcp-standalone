@@ -1,10 +1,6 @@
 #cloud-config
 # vim:filetype=yaml
 
-users:
-- name: travis
-  uid: 2000
-
 write_files:
 - path: /etc/default/gcloud-cleanup
   encoding: b64
@@ -20,7 +16,7 @@ write_files:
 
     [Service]
     Restart=always
-    ExecStart=/usr/bin/docker run --rm -u 2000 --env-file /etc/default/gcloud-cleanup --name=gcloud-cleanup ${docker_image}
+    ExecStart=/usr/bin/docker run --rm --env-file /etc/default/gcloud-cleanup --name=gcloud-cleanup ${docker_image}
     ExecStop=/usr/bin/docker stop gcloud-cleanup
     ExecStopPost=/usr/bin/docker rm gcloud-cleanup
 
