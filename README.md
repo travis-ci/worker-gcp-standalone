@@ -20,8 +20,6 @@ There are some things that are present in our production setup, which are not in
 
 * NAT: We do not support NATing. Each job instance will get an ephemeral public IP. Ingress traffic is disallowed.
 
-* Cleanup: We do not run [`gcloud-cleanup`](https://github.com/travis-ci/gcloud-cleanup), which means leaked VMs (e.g. from crashed workers) can persist. You may need to clean those up yourself.
-
 * Rate Limits: We do not rate-limit traffic to the GCP API, if you run into quota limits, apply for a quota increase from GCP.
 
 We may support some of these in the future if there is demand.
