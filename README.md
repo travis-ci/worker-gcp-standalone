@@ -247,6 +247,14 @@ To see the logs:
 sudo journalctl -u travis-worker --follow
 ```
 
+### Tracing
+
+Additionally, worker will emit traces to Stackdriver Trace, which allows you to dig into performance bottlenecks.
+
+Stackdriver Trace can be found [in the Google Cloud console](https://console.cloud.google.com/traces/traces).
+
+You can filter by app by searching for `+app:worker`, and you can also filter by repo `+app:igorwwwwwwwwwwwwwwwwwwww/hello-world` or job id `+job_id:729834`.
+
 ### Making changes
 
 When making changes to the config, rolling out the change requires a few steps.
