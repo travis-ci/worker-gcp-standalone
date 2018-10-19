@@ -112,8 +112,6 @@ resource "google_project_iam_member" "worker" {
   member  = "serviceAccount:${google_service_account.worker.email}"
 }
 
-# TODO: make worker find its own zone via metadata
-
 data "template_file" "worker_cloud_config" {
   template = "${file("${path.module}/assets/cloud-config-worker.yml.tpl")}"
 
