@@ -277,15 +277,6 @@ Note that this can affect running jobs, so if possible, you should schedule a ma
 
 ### Cleanup
 
-Since it is possible that jobs do not get cleaned up properly, you can use this command to find and delete old instances:
+Since it is possible that jobs do not get cleaned up properly, we want to periodically check for orphaned job VMs.
 
-```
-gcloud compute instances list \
-  --filter="creationTimestamp<$(ruby -r time -e 'puts (Time.now.utc - 2*3600).iso8601') AND name:travis-job-*" \
-  --format=json \
-  --project <project> \
-  | jq -r '.[].selfLink' \
-  | xargs -n1 -I'{}' gcloud compute instances delete --quiet {} --project <project>
-```
-
-You'll need to install [`jq`](https://stedolan.github.io/jq/) (`brew install jq`), and replace `<project>` with the name of your Google Cloud project.
+We have a service called [`gcloud-cleanup`](https://github.com/travis-ci/gcloud-cleanup) that does that, and this standalone worker ships with an instance that runs it!
