@@ -248,6 +248,16 @@ Stackdriver Trace can be found [in the Google Cloud console](https://console.clo
 
 You can filter by app by searching for `+app:worker`, and you can also filter by repo `+app:igorwwwwwwwwwwwwwwwwwwww/hello-world` or job id `+job_id:729834`.
 
+### Honeycomb
+
+You can send worker logs to [Honeycomb](https://honeycomb.io) by configuring the following variables in `config.auto.tfvars`:
+
+* `honeycomb_dataset`
+* `honeycomb_writekey`
+* `honeycomb_sample_rate` this is an inverse ratio, defaults to 1
+
+That will allow you to more effectively debug issues.
+
 ### Making changes
 
 When making changes to the config, rolling out the change requires a few steps.
