@@ -5,6 +5,18 @@ variable "cos_image" {
   default = "cos-cloud/cos-stable"
 }
 
+variable "honeycomb_dataset" {
+  default = ""
+}
+
+variable "honeycomb_writekey" {
+  default = ""
+}
+
+variable "honeycomb_sample_rate" {
+  default = "1"
+}
+
 variable "machine_type" {
   default = "n1-standard-1"
 }
