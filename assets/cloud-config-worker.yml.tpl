@@ -26,7 +26,6 @@ write_files:
   content: |
     [Application Options]
     SampleRate = ${honeycomb_sample_rate}
-    AddFields = app=worker
 
     [Required Options]
     ParserName = keyval
@@ -46,7 +45,7 @@ write_files:
     After=network.target
 
     [Service]
-    ExecStart=/bin/sh -c '/usr/bin/journalctl -u travis-worker --follow --output=cat | /usr/bin/docker run --rm -i -v /etc/honeytail/honeytail.conf:/etc/honeytail/honeytail.conf --name=honeytail travisci/honeytail:latest honeytail -c /etc/honeytail/honeytail.conf --add_field hostname=%H'
+    ExecStart=/bin/sh -c '/usr/bin/journalctl -u travis-worker --follow --output=cat | /usr/bin/docker run --rm -i -v /etc/honeytail/honeytail.conf:/etc/honeytail/honeytail.conf --name=honeytail travisci/honeytail:latest honeytail -c /etc/honeytail/honeytail.conf --add_field app=worker --add_field hostname=%H'
     ExecStop=/usr/bin/docker stop honeytail
     ExecStopPost=/usr/bin/docker rm honeytail
     Restart=on-failure
