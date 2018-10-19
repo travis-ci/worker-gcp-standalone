@@ -60,10 +60,15 @@ export TRAVIS_WORKER_GCE_REGION=${var.region}
 export TRAVIS_WORKER_GCE_ZONE=<generated>
 ```
 
-There are lots of other things that can be configured too:
+Worker tries to authenticate with the Google Cloud API via the system-local credentials, that can be created via `gcloud auth application-default login`. Alternatively, it's also possible to point to a credentials JSON file:
 
 ```
 export TRAVIS_WORKER_GCE_ACCOUNT_JSON=/var/tmp/gce.json
+```
+
+There are lots of other things that can be configured too:
+
+```
 export TRAVIS_WORKER_GCE_MACHINE_TYPE=n1-standard-2
 export TRAVIS_WORKER_GCE_DISK_SIZE=15
 export TRAVIS_WORKER_GCE_IMAGE_DEFAULT=travis-ci-garnet-trusty.%2B
