@@ -1,6 +1,6 @@
 # worker-gcp-standalone
 
-This is a terraform config that runs a worker in a setup that is similar to our hosted production setup ([travis-ci/terraform-config](https://github.com/travis-ci/gcloud-cleanup)) -- though it is a simplified version that makes less assumptions about the rest of the system.
+This is a terraform config that runs a worker in a setup that is similar to our hosted production setup ([travis-ci/terraform-config](https://github.com/travis-ci/terraform-config)) -- though it is a simplified version that makes less assumptions about the rest of the system.
 
 The main audience for this repo are enterprise users who would like to run their own workers on Google Cloud.
 
@@ -292,17 +292,9 @@ If the proposed changes look good, you can `apply`:
 terraform apply
 ```
 
-This will update the instance template, it will however not touch any of the existing instances.
-
-To make the changes live, the existing instances need to be replaced. That can be done via the `gcloud` tool on the command line (`region` would be something like `us-central1`):
-
-```
-gcloud beta compute instance-groups managed rolling-action replace worker --max-surge=4 --max-unavailable=4 --region <region> --project <project>
-```
-
 This will delete the existing worker instances and create new ones to replace them.
 
-Note that this can affect running jobs, so if possible, you should schedule a maintenance window for this operation and stop any running jobs before doing this.
+Please note that this can affect running jobs, they may get requeued. So if possible, you should schedule a maintenance window for this operation.
 
 ### Cleanup
 
