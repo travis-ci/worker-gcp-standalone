@@ -178,19 +178,18 @@ resource "google_compute_instance_template" "worker" {
 }
 
 resource "google_compute_region_instance_group_manager" "worker" {
+  provider = "google-beta"
+
   base_instance_name = "worker"
-  instance_template  = "${google_compute_instance_template.worker.self_link}"
   name               = "worker"
   target_size        = "${var.worker_managed_instance_count}"
-  update_strategy    = "ROLLING_UPDATE"
   region             = "${var.region}"
 
   distribution_policy_zones = "${formatlist("${var.region}-%s", var.zones)}"
 
-  rolling_update_policy {
-    type            = "PROACTIVE"
-    minimal_action  = "REPLACE"
-    max_surge_fixed = "${length(var.zones)}"
+  version {
+    name              = "default"
+    instance_template = "${google_compute_instance_template.worker.self_link}"
   }
 }
 
