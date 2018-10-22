@@ -183,7 +183,13 @@ cp backend.tf.example backend.tf
 vim backend.tf
 ```
 
-This step is optional. As a fallback, terraform will store the state on your local machine.
+Since the terraform state will contain secrets, it is a good practice to set the `encryption_key` in `backend.tf`, in order to encrypt the data at rest. You can generate such a key via:
+
+```
+head -c 32 /dev/urandom | base64
+```
+
+Configuring the remote state is optional. As a fallback, terraform will store the state on your local machine.
 
 Once the configuration is complete, you can go ahead and initialize terraform:
 

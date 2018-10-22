@@ -2,5 +2,7 @@ terraform {
   backend "gcs" {
     bucket  = "..."
     prefix  = "terraform/state"
+
+    encryption_key = "..."
   }
 }
